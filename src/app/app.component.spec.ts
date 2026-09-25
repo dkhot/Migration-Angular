@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { AppComponent } from './app.component';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [
-        AppComponent
-      ],
+      imports: [AppComponent],
+      providers: [provideRouter([])],
     }).compileComponents();
   });
 
@@ -26,6 +26,31 @@ describe('AppComponent', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.content span')?.textContent).toContain('my-greate-app app is running!');
+    expect(compiled.querySelector('h1')?.textContent).toContain('my-greate-app');
+  });
+
+  it('updates the view on a native click event under zoneless change detection', async () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+
+    compiled.querySelector('button')?.dispatchEvent(new Event('click'));
+    await fixture.whenStable();
+
+    expect(compiled.querySelector('h1')?.textContent).toContain('my-greate-app!');
+  });
+
+  it('updates the view on an ngModel-bound input event under zoneless change detection', async () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+
+    const modelInput = compiled.querySelectorAll('input')[1] as HTMLInputElement;
+    modelInput.value = 'updated-title';
+    modelInput.dispatchEvent(new Event('input'));
+    await fixture.whenStable();
+
+    expect(fixture.componentInstance.title).toEqual('updated-title');
+    expect(compiled.querySelector('h1')?.textContent).toContain('updated-title');
   });
 });

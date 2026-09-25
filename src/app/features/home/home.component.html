@@ -1,0 +1,14 @@
+<h2>Home</h2>
+
+@if (store.loading()) {
+  <p>Loading…</p>
+} @else if (store.error()) {
+  <p class="error">{{ store.error() }}</p>
+} @else {
+  <ul>
+    @for (item of store.items(); track item.id) {
+      <li>{{ item.label }}</li>
+    }
+  </ul>
+  <p>{{ store.itemCount() }} item(s)</p>
+}

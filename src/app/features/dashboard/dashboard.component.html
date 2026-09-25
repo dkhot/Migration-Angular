@@ -1,0 +1,21 @@
+<h2>Dashboard</h2>
+
+<input
+  type="text"
+  placeholder="Filter metrics…"
+  [ngModel]="store.filterTerm()"
+  (ngModelChange)="onFilterChange($event)"
+/>
+
+@if (store.loading()) {
+  <p>Loading…</p>
+} @else if (store.error()) {
+  <p class="error">{{ store.error() }}</p>
+} @else {
+  <ul>
+    @for (metric of store.filteredMetrics(); track metric.id) {
+      <li>{{ metric.label }}: {{ metric.value }}</li>
+    }
+  </ul>
+  <p>Total: {{ store.totalValue() }}</p>
+}
